@@ -1,4 +1,4 @@
-package in.dhruv.shoppingcart.entity;
+package in.dhruv.shoppingcart.enums;
 
 public enum Role {
     ROLE_ADMIN,

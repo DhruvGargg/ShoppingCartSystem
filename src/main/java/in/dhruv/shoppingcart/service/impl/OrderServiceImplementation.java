@@ -1,4 +1,4 @@
-package in.dhruv.shoppingcart.service;
+package in.dhruv.shoppingcart.service.impl;
 
-public interface OrderService {
+public class OrderServiceImplementation {
 }

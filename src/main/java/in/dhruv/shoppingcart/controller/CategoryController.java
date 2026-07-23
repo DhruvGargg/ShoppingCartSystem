@@ -1,4 +1,7 @@
 package in.dhruv.shoppingcart.controller;
 
-public class AuthController {
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class CategoryController {
 }

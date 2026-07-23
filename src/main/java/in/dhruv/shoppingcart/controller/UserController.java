@@ -1,4 +1,8 @@
 package in.dhruv.shoppingcart.controller;
 
-public class AuthController {
+import org.hibernate.annotations.ConcreteProxy;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class UserController {
 }
