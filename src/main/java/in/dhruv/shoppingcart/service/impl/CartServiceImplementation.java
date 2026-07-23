@@ -73,20 +73,16 @@ public class CartServiceImplementation implements CartService {
                         productId
                 )
                 .orElse(null);
-        if(cartItem == null)
-        {
+        if (cartItem == null) {
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
             cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
             cart.getCartItems().add(cartItem);
-        }
-        else
-        {
+        } else {
             int newQuantity = cartItem.getQuantity() + quantity;
-            if(product.getStock() < newQuantity)
-            {
+            if (product.getStock() < newQuantity) {
                 throw new RuntimeException(
                         "Insufficient product stock"
                 );
@@ -95,22 +91,71 @@ public class CartServiceImplementation implements CartService {
             cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
         }
         cartItemRepository.save(cartItem);
-        
+
         return cart;
     }
 
     @Override
+    @Transactional
     public Cart updateCartItemQuantity(Long userId, Long productId, Integer quantity) {
-        return null;
+        if (quantity <= 0) {
+            throw new RuntimeException(
+                    "Quantity must be greater than zero"
+            );
+        }
+        Cart cart = getCartByUserId(userId);
+        CartItem cartItem = cartItemRepository.
+                findByCartIdAndProductId(
+                        cart.getId(),
+                        productId
+                )
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        Product product = cartItem.getProduct();
+        if (product.getStock() < quantity) {
+            throw new RuntimeException(
+                    "Insufficient product stock"
+            );
+        }
+        cartItem.setQuantity(quantity);
+        cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+        cartItemRepository.save(cartItem);
+        calculateCartTotal(cart);
+        return cartRepository.save(cart);
     }
 
     @Override
-    public Cart removeProductFromCart(Long userId, Long productId) {
-        return null;
+    @Transactional
+    public Cart removeProductFromCart (Long userId, Long productId){
+        Cart cart = getCartByUserId(userId);
+        CartItem cartItem = cartItemRepository.
+                findByCartIdAndProductId(
+                        cart.getId(),
+                        productId
+                )
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        cart.getCartItems().remove(cartItem);
+        cartItemRepository.delete(cartItem);
+        calculateCartTotal(cart);
+        return cartRepository.save(cart);
     }
 
     @Override
-    public void clearCart(Long userId) {
+    @Transactional
+    public void clearCart (Long userId) {
+        Cart cart = getCartByUserId(userId);
+        cart.getCartItems().clear();
+        cart.setTotalPrice(BigDecimal.ZERO);
+        cartRepository.save(cart);
+    }
 
+    private void calculateCartTotal(Cart cart) {
+        BigDecimal totalPrice = cart.getCartItems()
+                .stream()
+                .map(CartItem::getSubtotal)
+                .reduce(
+                        BigDecimal.ZERO,
+                        BigDecimal::add
+                );
+        cart.setTotalPrice(totalPrice);
     }
 }
