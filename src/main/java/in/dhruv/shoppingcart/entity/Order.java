@@ -29,6 +29,8 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private BigDecimal totalPrice;
+
+    private BigDecimal totalAmount;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -62,18 +62,20 @@ public class CartServiceImplementation implements CartService {
         Product product = productRepository.
                 findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        if (product.getStock() < quantity) {
-            throw new RuntimeException(
-                    "Insufficient product stock"
-            );
-        }
+
         CartItem cartItem = cartItemRepository.
                 findByCartIdAndProductId(
                         cart.getId(),
                         productId
                 )
                 .orElse(null);
+
         if (cartItem == null) {
+            if (product.getStock() < quantity) {
+                throw new RuntimeException(
+                        "Insufficient product stock"
+                );
+            }
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
@@ -91,8 +93,8 @@ public class CartServiceImplementation implements CartService {
             cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
         }
         cartItemRepository.save(cartItem);
-
-        return cart;
+        calculateCartTotal(cart);
+        return cartRepository.save(cart);
     }
 
     @Override
