@@ -2,7 +2,7 @@ package in.dhruv.shoppingcart.dto.auth;
 
 import in.dhruv.shoppingcart.enums.Role;
 
-public class LoginResponse {
+public class LoginResponseDTO {
 
     private String token;
     private String type;
