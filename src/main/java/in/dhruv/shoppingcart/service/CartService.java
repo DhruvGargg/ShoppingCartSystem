@@ -1,20 +1,22 @@
 package in.dhruv.shoppingcart.service;
 
+import in.dhruv.shoppingcart.dto.cart.CartResponseDTO;
 import in.dhruv.shoppingcart.entity.Cart;
+import org.springframework.security.core.Authentication;
 
 public interface CartService {
 
-    Cart getCartByUserId(Long userId);
-    Cart createCart(Long userId);
-    Cart addProductToCart(Long userId,
+    CartResponseDTO getCartByUserId(Long userId);
+    CartResponseDTO createCart(Long userId);
+    CartResponseDTO addProductToCart(Long userId,
                           Long productId,
                           Integer quantity);
-    Cart updateCartItemQuantity(
+    CartResponseDTO updateCartItemQuantity(
             Long userId,
             Long productId,
             Integer quantity
     );
-    Cart removeProductFromCart(Long userId,
+    CartResponseDTO removeProductFromCart(Long userId,
                                Long productId);
     void clearCart(Long userId);
 }

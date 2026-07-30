@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class OrderResponse {
+public class OrderResponseDTO {
 
     private Long orderId;
     private LocalDateTime createdAt;
@@ -16,5 +16,5 @@ public class OrderResponse {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private BigDecimal totalAmount;
-    private List<OrderItemResponse> items;
+    private List<OrderItemResponseDTO> items;
 }

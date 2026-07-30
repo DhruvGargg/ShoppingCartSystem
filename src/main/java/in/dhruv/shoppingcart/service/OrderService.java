@@ -1,8 +1,6 @@
 package in.dhruv.shoppingcart.service;
 
-import in.dhruv.shoppingcart.dto.OrderDTO;
-import in.dhruv.shoppingcart.dto.order.OrderResponse;
-import in.dhruv.shoppingcart.entity.Order;
+import in.dhruv.shoppingcart.dto.order.OrderDTO;
 import in.dhruv.shoppingcart.enums.OrderStatus;
 
 import java.util.List;

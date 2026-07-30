@@ -1,8 +1,17 @@
 package in.dhruv.shoppingcart.dto.product;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
-public class ProductResponse {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductResponseDTO {
 
     private Long id;
     private String name;

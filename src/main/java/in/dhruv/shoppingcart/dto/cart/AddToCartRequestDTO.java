@@ -2,7 +2,7 @@ package in.dhruv.shoppingcart.dto.cart;
 
 import jakarta.validation.constraints.Min;
 
-public class AddToCartRequest {
+public class AddToCartRequestDTO {
 
     private Long productId;
 

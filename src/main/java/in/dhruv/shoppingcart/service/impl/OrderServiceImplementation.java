@@ -1,10 +1,9 @@
 package in.dhruv.shoppingcart.service.impl;
 
-import in.dhruv.shoppingcart.dto.OrderDTO;
+import in.dhruv.shoppingcart.dto.order.OrderDTO;
 import in.dhruv.shoppingcart.entity.*;
 import in.dhruv.shoppingcart.enums.OrderStatus;
 import in.dhruv.shoppingcart.mapper.OrderMapper;
-import in.dhruv.shoppingcart.repository.CartItemRepository;
 import in.dhruv.shoppingcart.repository.CartRepository;
 import in.dhruv.shoppingcart.repository.OrderRepository;
 import in.dhruv.shoppingcart.repository.UserRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,7 +34,9 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(Long orderId) {
+    public OrderDTO getOrderById(
+            Long orderId
+    ) {
         Order order = orderRepository
                 .findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -44,7 +44,9 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByUser(Long userId) {
+    public List<OrderDTO> getOrdersByUser(
+            Long userId
+    ) {
         List<Order> orderList = orderRepository
                 .findByUserId(userId);
         return orderList.stream()
@@ -53,7 +55,10 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public OrderDTO updateOrderStatus(Long orderId, OrderStatus status) {
+    public OrderDTO updateOrderStatus(
+            Long orderId,
+            OrderStatus status
+    ) {
         Order order = orderRepository
                 .findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -63,7 +68,9 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public OrderDTO cancelOrder(Long orderId) {
+    public OrderDTO cancelOrder(
+            Long orderId
+    ) {
         Order order = orderRepository
                 .findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -81,7 +88,9 @@ public class OrderServiceImplementation implements OrderService {
 
     @Override
     @Transactional
-    public OrderDTO checkout(Long userId) {
+    public OrderDTO checkout(
+            Long userId
+    ) {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

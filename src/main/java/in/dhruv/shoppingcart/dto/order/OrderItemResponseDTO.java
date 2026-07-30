@@ -1,6 +1,6 @@
 package in.dhruv.shoppingcart.dto.order;
 
-public class OrderItemResponse {
+public class OrderItemResponseDTO {
 
     private Long productId;
     private String productName;

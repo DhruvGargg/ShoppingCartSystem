@@ -1,9 +1,12 @@
 package in.dhruv.shoppingcart.controller;
 
+import in.dhruv.shoppingcart.dto.cart.CartResponseDTO;
 import in.dhruv.shoppingcart.entity.Cart;
+import in.dhruv.shoppingcart.security.CustomUserDetails;
 import in.dhruv.shoppingcart.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,26 +19,45 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping("user/{userId}")
-    private ResponseEntity<Cart> getCart(@PathVariable Long userId) {
-        return ResponseEntity.ok(
-                cartService
-                        .getCartByUserId(userId)
-        );
-    }
-
-    @PostMapping("user/{userId}")
-    private ResponseEntity<Cart> createCart(@PathVariable Long userId) {
+    @PostMapping("create/user/{userId}")
+    private ResponseEntity<CartResponseDTO> createCart(
+            @PathVariable Long userId
+    ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(cartService.createCart(userId)
         );
     }
 
+    private ResponseEntity<CartResponseDTO> getMyCart(
+            Authentication authentication
+    ) {
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        Long userId = userDetails.getId();
+
+        return ResponseEntity.ok(
+                cartService.getCartByUserId(userId)
+        );
+    }
+
+    @GetMapping("user/{userId}")
+    private ResponseEntity<CartResponseDTO> getCartByUserId(
+            @PathVariable Long userId
+    ) {
+        return ResponseEntity.ok(
+                cartService
+                        .getCartByUserId(userId)
+        );
+    }
+
     @PostMapping("user/{userId}/product/{productId}")
-    private ResponseEntity<Cart> addProductToCart(@PathVariable Long userId,
-                                                  @PathVariable Long productId,
-                                                  @RequestParam Integer quantity) {
+    private ResponseEntity<CartResponseDTO> addProductToCart(
+            @PathVariable Long userId,
+            @PathVariable Long productId,
+            @RequestParam Integer quantity
+    ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(cartService
@@ -47,9 +69,11 @@ public class CartController {
     }
 
     @PatchMapping("user/{userId}/items/{productId}")
-    private ResponseEntity<Cart> updateCart(@PathVariable Long userId,
-                                            @PathVariable Long productId,
-                                            Integer quantity) {
+    private ResponseEntity<CartResponseDTO> updateCartItemQuantity(
+            @PathVariable Long userId,
+            @PathVariable Long productId,
+            Integer quantity
+    ) {
         return ResponseEntity.ok(
                 cartService
                         .updateCartItemQuantity(
@@ -61,9 +85,10 @@ public class CartController {
     }
 
     @DeleteMapping("user/{userId}/product/{productId}")
-    private ResponseEntity<Cart> removeProductFromCart(
-        @PathVariable Long userId,
-        @PathVariable Long productId) {
+    private ResponseEntity<CartResponseDTO> removeProductFromCart(
+            @PathVariable Long userId,
+            @PathVariable Long productId
+    ) {
         return ResponseEntity.ok(
                 cartService
                         .removeProductFromCart(
@@ -73,7 +98,9 @@ public class CartController {
     }
 
     @DeleteMapping("/user/{userId}/items")
-    private ResponseEntity<Cart> clearCart(@PathVariable Long userId) {
+    private ResponseEntity<Cart> clearCart(
+            @PathVariable Long userId
+    ) {
         cartService.clearCart(userId);
         return ResponseEntity.noContent().build();
     }

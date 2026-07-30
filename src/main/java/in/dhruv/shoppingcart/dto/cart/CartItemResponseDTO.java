@@ -1,10 +1,17 @@
 package in.dhruv.shoppingcart.dto.cart;
 
-import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-public class CartItemResponse {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CartItemResponseDTO {
 
     private Long productId;
     private String productName;

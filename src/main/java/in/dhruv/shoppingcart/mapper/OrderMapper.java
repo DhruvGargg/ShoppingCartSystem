@@ -1,7 +1,7 @@
 package in.dhruv.shoppingcart.mapper;
 
-import in.dhruv.shoppingcart.dto.OrderDTO;
-import in.dhruv.shoppingcart.dto.OrderItemDTO;
+import in.dhruv.shoppingcart.dto.order.OrderDTO;
+import in.dhruv.shoppingcart.dto.order.OrderItemDTO;
 import in.dhruv.shoppingcart.entity.Order;
 import in.dhruv.shoppingcart.entity.OrderItem;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package in.dhruv.shoppingcart.controller;
 
-import in.dhruv.shoppingcart.dto.OrderDTO;
+import in.dhruv.shoppingcart.dto.order.OrderDTO;
 import in.dhruv.shoppingcart.enums.OrderStatus;
 import in.dhruv.shoppingcart.service.OrderService;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +16,6 @@ public class OrderController {
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
-    }
-
-    @PostMapping("/checkout/{userId}")
-    public ResponseEntity<OrderDTO> checkout(@PathVariable Long userId) {
-        return ResponseEntity.ok(
-                orderService
-                        .checkout(userId)
-        );
     }
 
     @GetMapping("/{orderId}")
@@ -56,6 +48,14 @@ public class OrderController {
         return ResponseEntity.ok(
                 orderService
                         .cancelOrder(orderId)
+        );
+    }
+
+    @PostMapping("/checkout/{userId}")
+    public ResponseEntity<OrderDTO> checkout(@PathVariable Long userId) {
+        return ResponseEntity.ok(
+                orderService
+                        .checkout(userId)
         );
     }
 

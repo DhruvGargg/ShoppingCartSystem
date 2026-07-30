@@ -1,9 +1,11 @@
 package in.dhruv.shoppingcart.service.impl;
 
+import in.dhruv.shoppingcart.dto.cart.CartResponseDTO;
 import in.dhruv.shoppingcart.entity.Cart;
 import in.dhruv.shoppingcart.entity.CartItem;
 import in.dhruv.shoppingcart.entity.Product;
 import in.dhruv.shoppingcart.entity.User;
+import in.dhruv.shoppingcart.mapper.CartMapper;
 import in.dhruv.shoppingcart.repository.CartItemRepository;
 import in.dhruv.shoppingcart.repository.CartRepository;
 import in.dhruv.shoppingcart.repository.ProductRepository;
@@ -22,24 +24,36 @@ public class CartServiceImplementation implements CartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
+    private final CartMapper cartMapper;
 
-    public CartServiceImplementation(CartRepository cartRepository, UserRepository userRepository, ProductRepository productRepository, CartItemRepository cartItemRepository) {
+    public CartServiceImplementation(
+            CartRepository cartRepository,
+            UserRepository userRepository,
+            ProductRepository productRepository,
+            CartItemRepository cartItemRepository,
+            CartMapper cartMapper
+    ) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
+        this.cartMapper = cartMapper;
     }
 
     @Override
-    public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Cart not found for user"));
+    public CartResponseDTO getCartByUserId(
+            Long userId
+    ) {
+        Cart cart = findCartByUserId(userId);
+        return cartMapper.toResponseDTO(cart);
     }
 
     @Override
-    public Cart createCart(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public CartResponseDTO createCart(
+            Long userId
+    ) {
+        User user = findUserByUserId(userId);
+
         if (cartRepository.findByUserId(userId).isPresent()) {
             throw new RuntimeException("User already has a cart");
         }
@@ -47,28 +61,27 @@ public class CartServiceImplementation implements CartService {
         cart.setUser(user);
         cart.setTotalPrice(BigDecimal.ZERO);
         cart.setCartItems(new ArrayList<>());
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cartMapper.toResponseDTO(cart);
     }
 
     @Override
     @Transactional
-    public Cart addProductToCart(Long userId, Long productId, Integer quantity) {
+    public CartResponseDTO addProductToCart(
+            Long userId,
+            Long productId,
+            Integer quantity
+    ) {
         if (quantity <= 0) {
             throw new RuntimeException(
                     "Quantity must be greater than zero"
             );
         }
-        Cart cart = getCartByUserId(userId);
-        Product product = productRepository.
-                findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Cart cart = findCartByUserId(userId);
 
-        CartItem cartItem = cartItemRepository.
-                findByCartIdAndProductId(
-                        cart.getId(),
-                        productId
-                )
-                .orElse(null);
+        Product product = findProductByProductId(productId);
+
+        CartItem cartItem = findCartItemByCartIdAndProductId(cart.getId(), productId);
 
         if (cartItem == null) {
             if (product.getStock() < quantity) {
@@ -94,24 +107,25 @@ public class CartServiceImplementation implements CartService {
         }
         cartItemRepository.save(cartItem);
         calculateCartTotal(cart);
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cartMapper.toResponseDTO(cart);
     }
 
     @Override
     @Transactional
-    public Cart updateCartItemQuantity(Long userId, Long productId, Integer quantity) {
+    public CartResponseDTO updateCartItemQuantity(
+            Long userId,
+            Long productId,
+            Integer quantity
+    ) {
         if (quantity <= 0) {
             throw new RuntimeException(
                     "Quantity must be greater than zero"
             );
         }
-        Cart cart = getCartByUserId(userId);
-        CartItem cartItem = cartItemRepository.
-                findByCartIdAndProductId(
-                        cart.getId(),
-                        productId
-                )
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        Cart cart = findCartByUserId(userId);
+
+        CartItem cartItem = findCartItemByCartIdAndProductId(cart.getId(), productId);
         Product product = cartItem.getProduct();
         if (product.getStock() < quantity) {
             throw new RuntimeException(
@@ -122,13 +136,14 @@ public class CartServiceImplementation implements CartService {
         cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
         cartItemRepository.save(cartItem);
         calculateCartTotal(cart);
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cartMapper.toResponseDTO(cart);
     }
 
     @Override
     @Transactional
-    public Cart removeProductFromCart (Long userId, Long productId){
-        Cart cart = getCartByUserId(userId);
+    public CartResponseDTO removeProductFromCart (Long userId, Long productId){
+        Cart cart = findCartByUserId(userId);
         CartItem cartItem = cartItemRepository.
                 findByCartIdAndProductId(
                         cart.getId(),
@@ -138,13 +153,14 @@ public class CartServiceImplementation implements CartService {
         cart.getCartItems().remove(cartItem);
         cartItemRepository.delete(cartItem);
         calculateCartTotal(cart);
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cartMapper.toResponseDTO(cart);
     }
 
     @Override
     @Transactional
     public void clearCart (Long userId) {
-        Cart cart = getCartByUserId(userId);
+        Cart cart = findCartByUserId(userId);
         cart.getCartItems().clear();
         cart.setTotalPrice(BigDecimal.ZERO);
         cartRepository.save(cart);
@@ -159,5 +175,38 @@ public class CartServiceImplementation implements CartService {
                         BigDecimal::add
                 );
         cart.setTotalPrice(totalPrice);
+    }
+
+    private Cart findCartByUserId(
+            Long userId
+    ) {
+        return cartRepository
+                .findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+    }
+
+    private User findUserByUserId(
+            Long userId
+    ) {
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    private Product findProductByProductId(
+            Long productId
+    ) {
+        return productRepository
+                .findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    private CartItem findCartItemByCartIdAndProductId(
+            Long cartId,
+            Long productId
+    ) {
+        return cartItemRepository
+                .findByCartIdAndProductId(cartId, productId)
+                .orElse(null);
     }
 }

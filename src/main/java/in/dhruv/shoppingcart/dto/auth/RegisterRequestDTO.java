@@ -2,9 +2,16 @@ package in.dhruv.shoppingcart.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import org.hibernate.annotations.ManyToAny;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public class RegisterRequest {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class RegisterRequestDTO {
 
     @NotBlank
     private String name;

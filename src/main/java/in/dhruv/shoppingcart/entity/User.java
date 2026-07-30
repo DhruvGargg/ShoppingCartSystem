@@ -2,14 +2,13 @@ package in.dhruv.shoppingcart.entity;
 
 import in.dhruv.shoppingcart.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -26,7 +25,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Boolean enabled;
+    private boolean enabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

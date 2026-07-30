@@ -5,6 +5,8 @@ import in.dhruv.shoppingcart.dto.user.UserResponseDTO;
 import in.dhruv.shoppingcart.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class UserMapper {
 
@@ -18,16 +20,12 @@ public class UserMapper {
         return user;
     }
 
-    public UserResponseDTO toResponseDTO(User user)
+    public UserResponseDTO toResponseDTO(UserRequestDTO userRequestDTO)
     {
         UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setId(user.getId());
-        userResponseDTO.setName(user.getName());
-        userResponseDTO.setEmail(user.getEmail());
-        userResponseDTO.setRole(user.getRole());
-        userResponseDTO.setEnabled(user.getEnabled());
-        userResponseDTO.setCreatedAt(user.getCreatedAt());
-        userResponseDTO.setUpdatedAt(user.getUpdatedAt());
+        userResponseDTO.setName(userRequestDTO.getName());
+        userResponseDTO.setEmail(userRequestDTO.getEmail());
+        userResponseDTO.setRole(userRequestDTO.getRole());
         return userResponseDTO;
     }
 }
