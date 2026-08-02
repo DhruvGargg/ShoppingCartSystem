@@ -1,4 +1,4 @@
-package in.dhruv.shoppingcart.dto.order;
+package in.dhruv.shoppingcart.dto.orderitem;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

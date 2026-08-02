@@ -1,5 +1,6 @@
 package in.dhruv.shoppingcart.dto.order;
 
+import in.dhruv.shoppingcart.dto.orderitem.OrderItemDTO;
 import in.dhruv.shoppingcart.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
