@@ -1,5 +1,6 @@
 package in.dhruv.shoppingcart.dto.cart;
 
+import in.dhruv.shoppingcart.dto.cartitem.CartItemResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
