@@ -1,6 +1,7 @@
 package in.dhruv.shoppingcart.controller;
 
-import in.dhruv.shoppingcart.dto.cart.CartResponseDTO;
+import in.dhruv.shoppingcart.dto.cart.AddToCartRequestDTO;
+import in.dhruv.shoppingcart.dto.cart.UpdateCartResponseDTO;
 import in.dhruv.shoppingcart.entity.Cart;
 import in.dhruv.shoppingcart.security.CustomUserDetails;
 import in.dhruv.shoppingcart.service.CartService;
@@ -20,7 +21,7 @@ public class CartController {
     }
 
     @PostMapping("create/user/{userId}")
-    private ResponseEntity<CartResponseDTO> createCart(
+    private ResponseEntity<UpdateCartResponseDTO> createCart(
             @PathVariable Long userId
     ) {
         return ResponseEntity
@@ -29,12 +30,13 @@ public class CartController {
         );
     }
 
-    private ResponseEntity<CartResponseDTO> getMyCart(
+    private ResponseEntity<UpdateCartResponseDTO> getMyCart(
             Authentication authentication
     ) {
         CustomUserDetails userDetails =
                 (CustomUserDetails) authentication.getPrincipal();
 
+        assert userDetails != null;
         Long userId = userDetails.getId();
 
         return ResponseEntity.ok(
@@ -43,7 +45,7 @@ public class CartController {
     }
 
     @GetMapping("user/{userId}")
-    private ResponseEntity<CartResponseDTO> getCartByUserId(
+    private ResponseEntity<UpdateCartResponseDTO> getCartByUserId(
             @PathVariable Long userId
     ) {
         return ResponseEntity.ok(
@@ -53,23 +55,23 @@ public class CartController {
     }
 
     @PostMapping("user/{userId}/product/{productId}")
-    private ResponseEntity<CartResponseDTO> addProductToCart(
-            @PathVariable Long userId,
-            @PathVariable Long productId,
-            @RequestParam Integer quantity
-    ) {
+    private ResponseEntity<UpdateCartResponseDTO> addProductToCart(
+            AddToCartRequestDTO addToCartRequestDTO,
+            Long userId
+    )
+    {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(cartService
                         .addProductToCart(
-                                userId,
-                                productId,
-                                quantity)
+                                addToCartRequestDTO,
+                                userId
+                        )
                 );
     }
 
     @PatchMapping("user/{userId}/items/{productId}")
-    private ResponseEntity<CartResponseDTO> updateCartItemQuantity(
+    private ResponseEntity<UpdateCartResponseDTO> updateCartItemQuantity(
             @PathVariable Long userId,
             @PathVariable Long productId,
             Integer quantity
@@ -85,7 +87,7 @@ public class CartController {
     }
 
     @DeleteMapping("user/{userId}/product/{productId}")
-    private ResponseEntity<CartResponseDTO> removeProductFromCart(
+    private ResponseEntity<UpdateCartResponseDTO> removeProductFromCart(
             @PathVariable Long userId,
             @PathVariable Long productId
     ) {

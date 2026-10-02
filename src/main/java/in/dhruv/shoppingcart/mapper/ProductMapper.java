@@ -14,8 +14,12 @@ import org.springframework.stereotype.Component;
 public class ProductMapper {
 
     public Product toEntity(ProductRequestDTO productRequestDTO) {
-
-        return null;
+        Product product = new Product();
+        product.setName(productRequestDTO.getName());
+        product.setDescription(productRequestDTO.getDescription());
+        product.setPrice(productRequestDTO.getPrice());
+        product.setStock(productRequestDTO.getStock());
+        return product;
     }
 
     public ProductResponseDTO toDTO(Product product) {

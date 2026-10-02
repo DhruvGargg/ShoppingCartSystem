@@ -3,6 +3,7 @@ package in.dhruv.shoppingcart.service;
 import in.dhruv.shoppingcart.dto.product.ProductRequestDTO;
 import in.dhruv.shoppingcart.dto.product.ProductResponseDTO;
 import in.dhruv.shoppingcart.entity.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -23,4 +24,10 @@ public interface ProductService {
     );
     void deleteProduct(Long id);
 
+    Page<ProductResponseDTO> getAllProducts(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    );
 }

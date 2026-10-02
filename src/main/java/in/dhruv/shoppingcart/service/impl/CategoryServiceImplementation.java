@@ -3,9 +3,11 @@ package in.dhruv.shoppingcart.service.impl;
 import in.dhruv.shoppingcart.dto.category.CategoryRequestDTO;
 import in.dhruv.shoppingcart.dto.category.CategoryResponseDTO;
 import in.dhruv.shoppingcart.entity.Category;
+import in.dhruv.shoppingcart.exception.ResourceNotFoundException;
 import in.dhruv.shoppingcart.mapper.CategoryMapper;
 import in.dhruv.shoppingcart.repository.CategoryRepository;
 import in.dhruv.shoppingcart.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,21 +36,21 @@ public class CategoryServiceImplementation implements CategoryService {
 
     @Override
     public CategoryResponseDTO createCategory(
-            CategoryRequestDTO categoryRequestDTO
+            @Valid CategoryRequestDTO categoryRequestDTO
     ) {
         Category category = new Category();
         category.setName(categoryRequestDTO.getName());
         category.setDescription(categoryRequestDTO.getDescription());
         categoryRepository.save(category);
-        return categoryMapper.toResponseDTO(category);
+        return categoryMapper.toDTO(category);
     }
 
     @Override
     public CategoryResponseDTO getCategoryById(Long id) {
         Category category = categoryRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        return categoryMapper.toResponseDTO(category);
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        return categoryMapper.toDTO(category);
     }
 
     @Override
@@ -56,29 +58,32 @@ public class CategoryServiceImplementation implements CategoryService {
         return categoryRepository
                 .findAll()
                 .stream()
-                .map(categoryMapper::toResponseDTO)
+                .map(categoryMapper::toDTO)
                 .toList();
     }
 
     @Override
-    public Category updateCategory(
+    public CategoryResponseDTO updateCategory(
             Long id,
             CategoryRequestDTO categoryRequestDTO
     ) {
         Category categoryToUpdate =
                 categoryRepository
                         .findById(id)
-                        .orElseThrow(() -> new RuntimeException("Category not found"));
-        categoryToUpdate.setName(categoryToUpdate.getName());
-        categoryToUpdate.setDescription(categoryToUpdate.getDescription());
-        categoryToUpdate.setId(categoryToUpdate.getId());
-        categoryToUpdate.setProducts(categoryRequestDTO.getP);
-        return categoryRepository.save(categoryToUpdate);
+                        .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        categoryToUpdate.setName(categoryRequestDTO.getName());
+        categoryToUpdate.setDescription(categoryRequestDTO.getDescription());
+        categoryToUpdate.setId(id);
+        categoryRepository.save(categoryToUpdate);
+        return categoryMapper.toDTO(categoryToUpdate);
     }
 
     @Override
     public void deleteCategory(Long id) {
-        Category category = getCategoryById(id);
+        Category category =
+                categoryRepository
+                        .findById(id)
+                        .orElseThrow(() -> new RuntimeException("Category not found"));
         categoryRepository.delete(category);
     }
 }

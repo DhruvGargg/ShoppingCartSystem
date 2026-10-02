@@ -1,8 +1,10 @@
 package in.dhruv.shoppingcart.service.impl;
 
-import in.dhruv.shoppingcart.dto.order.OrderDTO;
+import in.dhruv.shoppingcart.dto.order.OrderResponseDTO;
 import in.dhruv.shoppingcart.entity.*;
 import in.dhruv.shoppingcart.enums.OrderStatus;
+import in.dhruv.shoppingcart.exception.BadRequestException;
+import in.dhruv.shoppingcart.exception.ResourceNotFoundException;
 import in.dhruv.shoppingcart.mapper.OrderMapper;
 import in.dhruv.shoppingcart.repository.CartRepository;
 import in.dhruv.shoppingcart.repository.OrderRepository;
@@ -34,17 +36,17 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderById(
+    public OrderResponseDTO getOrderById(
             Long orderId
     ) {
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         return orderMapper.toDTO(order);
     }
 
     @Override
-    public List<OrderDTO> getOrdersByUser(
+    public List<OrderResponseDTO> getOrdersByUser(
             Long userId
     ) {
         List<Order> orderList = orderRepository
@@ -55,40 +57,51 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public OrderDTO updateOrderStatus(
+    public OrderResponseDTO updateOrderStatus(
             Long orderId,
             OrderStatus status
     ) {
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BadRequestException(
+                    "Cancelled order cannot be updated"
+            );
+        }
         order.setStatus(status);
+        order.setUpdatedAt(LocalDateTime.now());
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toDTO(updatedOrder);
     }
 
     @Override
-    public OrderDTO cancelOrder(
-            Long orderId
-    ) {
+    public OrderResponseDTO cancelOrder(Long orderId) {
+
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        if(order.getStatus() == OrderStatus.CANCELLED) {
-            throw new RuntimeException("Order is already cancelled");
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Order not found"));
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BadRequestException(
+                    "Order is already cancelled"
+            );
         }
-        if(order.getStatus() == OrderStatus.SHIPPED ||
+        if (order.getStatus() == OrderStatus.SHIPPED ||
                 order.getStatus() == OrderStatus.DELIVERED) {
-            throw new RuntimeException("Order cannot be cancelled");
+            throw new BadRequestException(
+                    "Order cannot be cancelled"
+            );
         }
         order.setStatus(OrderStatus.CANCELLED);
+        order.setUpdatedAt(LocalDateTime.now());
         Order cancelledOrder = orderRepository.save(order);
         return orderMapper.toDTO(cancelledOrder);
     }
 
     @Override
     @Transactional
-    public OrderDTO checkout(
+    public OrderResponseDTO checkout(
             Long userId
     ) {
         User user = userRepository
@@ -106,6 +119,7 @@ public class OrderServiceImplementation implements OrderService {
         order.setUser(user);
         order.setStatus(OrderStatus.CONFIRMED);
         order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
 
         BigDecimal totalAmount = BigDecimal.ZERO;
         for(CartItem cartItem : cart.getCartItems()) {

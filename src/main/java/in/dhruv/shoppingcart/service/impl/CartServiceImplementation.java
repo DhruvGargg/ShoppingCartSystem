@@ -1,6 +1,7 @@
 package in.dhruv.shoppingcart.service.impl;
 
-import in.dhruv.shoppingcart.dto.cart.CartResponseDTO;
+import in.dhruv.shoppingcart.dto.cart.AddToCartRequestDTO;
+import in.dhruv.shoppingcart.dto.cart.UpdateCartResponseDTO;
 import in.dhruv.shoppingcart.entity.Cart;
 import in.dhruv.shoppingcart.entity.CartItem;
 import in.dhruv.shoppingcart.entity.Product;
@@ -41,7 +42,7 @@ public class CartServiceImplementation implements CartService {
     }
 
     @Override
-    public CartResponseDTO getCartByUserId(
+    public UpdateCartResponseDTO getCartByUserId(
             Long userId
     ) {
         Cart cart = findCartByUserId(userId);
@@ -49,7 +50,7 @@ public class CartServiceImplementation implements CartService {
     }
 
     @Override
-    public CartResponseDTO createCart(
+    public UpdateCartResponseDTO createCart(
             Long userId
     ) {
         User user = findUserByUserId(userId);
@@ -67,24 +68,27 @@ public class CartServiceImplementation implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDTO addProductToCart(
-            Long userId,
-            Long productId,
-            Integer quantity
+    public UpdateCartResponseDTO addProductToCart(
+            AddToCartRequestDTO addToCartRequestDTO,
+            Long userId
     ) {
-        if (quantity <= 0) {
+        if (addToCartRequestDTO.getQuantity() <= 0) {
             throw new RuntimeException(
                     "Quantity must be greater than zero"
             );
         }
-        Cart cart = findCartByUserId(userId);
-
-        Product product = findProductByProductId(productId);
-
-        CartItem cartItem = findCartItemByCartIdAndProductId(cart.getId(), productId);
-
+        Cart cart = findCartByUserId(
+                userId
+        );
+        Product product = findProductByProductId(
+                addToCartRequestDTO.getProductId()
+        );
+        CartItem cartItem = findCartItemByCartIdAndProductId(
+                cart.getId(),
+                addToCartRequestDTO.getProductId()
+        );
         if (cartItem == null) {
-            if (product.getStock() < quantity) {
+            if (product.getStock() < addToCartRequestDTO.getQuantity()) {
                 throw new RuntimeException(
                         "Insufficient product stock"
                 );
@@ -92,11 +96,11 @@ public class CartServiceImplementation implements CartService {
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
-            cartItem.setQuantity(quantity);
-            cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
+            cartItem.setQuantity(addToCartRequestDTO.getQuantity());
+            cartItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(addToCartRequestDTO.getQuantity())));
             cart.getCartItems().add(cartItem);
         } else {
-            int newQuantity = cartItem.getQuantity() + quantity;
+            int newQuantity = cartItem.getQuantity() + addToCartRequestDTO.getQuantity();
             if (product.getStock() < newQuantity) {
                 throw new RuntimeException(
                         "Insufficient product stock"
@@ -113,7 +117,7 @@ public class CartServiceImplementation implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDTO updateCartItemQuantity(
+    public UpdateCartResponseDTO updateCartItemQuantity(
             Long userId,
             Long productId,
             Integer quantity
@@ -142,7 +146,11 @@ public class CartServiceImplementation implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDTO removeProductFromCart (Long userId, Long productId){
+    public UpdateCartResponseDTO removeProductFromCart (
+            Long userId,
+            Long productId
+    )
+    {
         Cart cart = findCartByUserId(userId);
         CartItem cartItem = cartItemRepository.
                 findByCartIdAndProductId(

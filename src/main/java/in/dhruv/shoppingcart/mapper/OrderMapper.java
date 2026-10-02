@@ -1,7 +1,9 @@
 package in.dhruv.shoppingcart.mapper;
 
-import in.dhruv.shoppingcart.dto.order.OrderDTO;
-import in.dhruv.shoppingcart.dto.order.OrderItemDTO;
+import in.dhruv.shoppingcart.dto.order.OrderRequestDTO;
+import in.dhruv.shoppingcart.dto.order.OrderResponseDTO;
+import in.dhruv.shoppingcart.dto.orderitem.OrderItemRequestDTO;
+import in.dhruv.shoppingcart.dto.orderitem.OrderItemResponseDTO;
 import in.dhruv.shoppingcart.entity.Order;
 import in.dhruv.shoppingcart.entity.OrderItem;
 import org.springframework.stereotype.Component;
@@ -12,32 +14,28 @@ import java.util.List;
 @Component
 public class OrderMapper {
 
-    public OrderDTO toDTO(Order order) {
-        List<OrderItemDTO> orderItems = order
+    private OrderItemMapper orderItemMapper;
+
+    public OrderResponseDTO toDTO(
+            Order order
+    ) {
+        List<OrderItemResponseDTO> orderItems = order
                 .getOrderItems()
                 .stream()
-                .map(this::toOrderItemDTO)
+                .map(orderItemMapper::toDTO)
                 .toList();
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setId(order.getId());
-        orderDTO.setUserId(order.getUser().getId());
-        orderDTO.setCreatedAt(order.getCreatedAt());
-        orderDTO.setStatus(order.getStatus());
-        orderDTO.setOrderItems(orderItems);
-        return orderDTO;
+        OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
+        orderResponseDTO.setOrderId(order.getId());
+        orderResponseDTO.setItems(orderItems);
+        return orderResponseDTO;
     }
 
-    public OrderItemDTO toOrderItemDTO(OrderItem orderItem) {
-        BigDecimal subtotal = orderItem
-                .getPrice()
-                .multiply(BigDecimal.valueOf(orderItem.getQuantity()));
-        OrderItemDTO orderItemDTO = new OrderItemDTO();
-        orderItemDTO.setId(orderItem.getId());
-        orderItemDTO.setQuantity(orderItem.getQuantity());
-        orderItemDTO.setSubtotal(subtotal);
-        orderItemDTO.setPrice(orderItem.getPrice());
-        orderItemDTO.setProductName(orderItem.getProduct().getName());
-        return orderItemDTO;
+    public Order toEntity(
+        OrderRequestDTO orderRequestDTO
+    ) {
+        Order order = new Order();
+
+        return order;
     }
 
 }

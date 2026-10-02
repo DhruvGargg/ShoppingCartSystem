@@ -3,6 +3,7 @@ package in.dhruv.shoppingcart.service.impl;
 import in.dhruv.shoppingcart.dto.auth.RegisterRequestDTO;
 import in.dhruv.shoppingcart.entity.User;
 import in.dhruv.shoppingcart.enums.Role;
+import in.dhruv.shoppingcart.exception.ResourceNotFoundException;
 import in.dhruv.shoppingcart.repository.UserRepository;
 import in.dhruv.shoppingcart.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,7 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User createUser(RegisterRequestDTO registerRequestDTO) {
         if (userRepository.existsByEmail(registerRequestDTO.getEmail())) {
-            throw new RuntimeException("User with this email already exists");
+            throw new ResourceNotFoundException("User with this email already exists");
         }
         User user = new User();
         user.setName(registerRequestDTO.getName());

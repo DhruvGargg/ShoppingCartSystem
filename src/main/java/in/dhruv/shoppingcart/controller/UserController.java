@@ -25,7 +25,9 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(
-            @RequestBody RegisterRequestDTO registerRequestDTO) {
+            @RequestBody RegisterRequestDTO registerRequestDTO
+    )
+    {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userService.createUser(registerRequestDTO));
@@ -33,7 +35,9 @@ public class UserController {
 
     @RequestMapping("/{id}")
     public ResponseEntity<User> getUserById(
-            @PathVariable Long id) {
+            @PathVariable Long id
+    )
+    {
         return ResponseEntity.ok(
                 userService
                         .getUserById(id)
@@ -42,7 +46,9 @@ public class UserController {
 
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(
-            @PathVariable String email) {
+            @PathVariable String email
+    )
+    {
         return ResponseEntity.ok(
                 userService
                         .getUserByEmail(email)
@@ -59,7 +65,9 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(
             @PathVariable Long id,
-            @RequestBody User user) {
+            @RequestBody User user
+    )
+    {
         return ResponseEntity.ok(
                 userService.updateUser(id, user)
         );

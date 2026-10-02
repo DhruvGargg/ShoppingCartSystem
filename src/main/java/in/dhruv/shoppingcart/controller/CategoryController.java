@@ -1,8 +1,11 @@
 package in.dhruv.shoppingcart.controller;
 
+import in.dhruv.shoppingcart.dto.category.CategoryRequestDTO;
+import in.dhruv.shoppingcart.dto.category.CategoryResponseDTO;
 import in.dhruv.shoppingcart.entity.Cart;
 import in.dhruv.shoppingcart.entity.Category;
 import in.dhruv.shoppingcart.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +21,16 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    private ResponseEntity<Category> createCategory(
-            @RequestBody Category category
+    private ResponseEntity<CategoryResponseDTO> createCategory(
+            @Valid @RequestBody CategoryRequestDTO categoryRequestDTO
     ) {
         return ResponseEntity.ok(
-                categoryService.createCategory(category)
+                categoryService.createCategory(categoryRequestDTO)
         );
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<Category> getCategoryById(
+    private ResponseEntity<CategoryResponseDTO> getCategoryById(
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(
@@ -36,19 +39,19 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    private ResponseEntity<Iterable<Category>> getAllCategories() {
+    private ResponseEntity<Iterable<CategoryResponseDTO>> getAllCategories() {
         return ResponseEntity.ok(
                 categoryService.getAllCategories()
         );
     }
 
     @PutMapping("/update/{id}")
-    private ResponseEntity<Category> updateCategory(
+    private ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable Long id,
-            @RequestBody  Category category
+            @RequestBody CategoryRequestDTO categoryrequestDTO
     ) {
         return ResponseEntity.ok(
-                categoryService.updateCategory(id, category)
+                categoryService.updateCategory(id, categoryrequestDTO)
         );
     }
 

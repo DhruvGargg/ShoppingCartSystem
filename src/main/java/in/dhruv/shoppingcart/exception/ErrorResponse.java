@@ -1,7 +1,20 @@
 package in.dhruv.shoppingcart.exception;
 
-public class ErrorResponse extends RuntimeException {
-  public ErrorResponse(String message) {
-    super(message);
-  }
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ErrorResponse {
+
+    private LocalDateTime timestamp;
+    private int status;
+    private String error;
+    private String message;
+    private String path;
+
 }

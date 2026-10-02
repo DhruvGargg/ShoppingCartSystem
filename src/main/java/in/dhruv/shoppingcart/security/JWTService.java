@@ -12,7 +12,7 @@ import java.util.Date;
 @Service
 public class JWTService {
 
-    private long jwtExpirationTime;
+    private final long jwtExpirationTime;
 
     private final SecretKey secretKey;
 

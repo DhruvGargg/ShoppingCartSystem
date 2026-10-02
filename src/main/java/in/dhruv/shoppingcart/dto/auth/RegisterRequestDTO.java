@@ -2,6 +2,7 @@ package in.dhruv.shoppingcart.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RegisterRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
-    @Email
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email cannot be blank")
     private String email;
 
-    @NotBlank
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 }

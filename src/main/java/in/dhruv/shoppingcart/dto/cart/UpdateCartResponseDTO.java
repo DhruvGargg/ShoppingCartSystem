@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartResponseDTO {
+public class UpdateCartResponseDTO {
 
     private Long cartId;
     private List<CartItemResponseDTO> items;

@@ -1,28 +1,17 @@
 package in.dhruv.shoppingcart.dto.order;
 
-import in.dhruv.shoppingcart.dto.orderitem.OrderItemDTO;
-import in.dhruv.shoppingcart.enums.OrderStatus;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDTO {
+public class OrderRequestDTO {
 
-    private Long id;
-    private Long userId;
-    private BigDecimal totalAmount;
-    private OrderStatus status;
-    private List<OrderItemDTO> orderItems;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    @NotBlank(message = "Shipping Address cannot be empty")
+    private String shippingAddress;
 }

@@ -1,6 +1,7 @@
 package in.dhruv.shoppingcart.controller;
 
-import in.dhruv.shoppingcart.dto.order.OrderDTO;
+import in.dhruv.shoppingcart.dto.order.OrderRequestDTO;
+import in.dhruv.shoppingcart.dto.order.OrderResponseDTO;
 import in.dhruv.shoppingcart.enums.OrderStatus;
 import in.dhruv.shoppingcart.service.OrderService;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,10 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long orderId) {
+    public ResponseEntity<OrderResponseDTO> getOrderById(
+            @PathVariable Long orderId
+    )
+    {
         return ResponseEntity.ok(
                 orderService
                         .getOrderById(orderId)
@@ -27,7 +31,10 @@ public class OrderController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<OrderResponseDTO>> getOrdersByUser(
+            @PathVariable Long userId
+    )
+    {
         return ResponseEntity.ok(
                 orderService
                         .getOrdersByUser(userId)
@@ -35,8 +42,11 @@ public class OrderController {
     }
 
     @PatchMapping("/status/{orderId}")
-    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long orderId,
-                                                      @RequestParam OrderStatus status) {
+    public ResponseEntity<OrderResponseDTO> updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestParam OrderStatus status
+    )
+    {
         return ResponseEntity.ok(
                 orderService
                         .updateOrderStatus(orderId, status)
@@ -44,7 +54,9 @@ public class OrderController {
     }
 
     @PatchMapping("/cancel/{orderId}")
-    public ResponseEntity<OrderDTO> cancelOrder(@PathVariable Long orderId) {
+    public ResponseEntity<OrderResponseDTO> cancelOrder(
+            @PathVariable Long orderId
+    ) {
         return ResponseEntity.ok(
                 orderService
                         .cancelOrder(orderId)
@@ -52,7 +64,9 @@ public class OrderController {
     }
 
     @PostMapping("/checkout/{userId}")
-    public ResponseEntity<OrderDTO> checkout(@PathVariable Long userId) {
+    public ResponseEntity<OrderResponseDTO> checkout(
+            @PathVariable Long userId
+    ) {
         return ResponseEntity.ok(
                 orderService
                         .checkout(userId)
