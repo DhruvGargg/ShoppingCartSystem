@@ -60,7 +60,7 @@ public class UserServiceImplementation implements UserService {
     public User updateUser(Long id, User user) {
         User userToUpdate = getUserById(id);
         userToUpdate.setUpdatedAt(user.getUpdatedAt());
-        userToUpdate.setEnabled(user.isEnabled());
+        userToUpdate.setEnabled(user.getEnabled());
         userToUpdate.setRole(user.getRole());
         userToUpdate.setName(user.getName());
         userToUpdate.setEmail(user.getEmail());

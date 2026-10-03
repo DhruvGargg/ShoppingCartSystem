@@ -24,7 +24,7 @@ public class CustomUserDetails implements UserDetails {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.enabled = user.isEnabled();
+        this.enabled = user.getEnabled();
         this.authorities = List.of(
                 new SimpleGrantedAuthority(
                         "ROLE_" + user.getRole().name()
