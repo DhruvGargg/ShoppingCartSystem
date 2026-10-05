@@ -66,10 +66,10 @@ public class ProductServiceImplementation implements ProductService {
     }
 
     @Override
-    @Cacheable(
-            cacheNames = "productById",
-            key = "#id"
-    )
+//    @Cacheable(
+//            cacheNames = "productById",
+//            key = "#id"
+//    )
     public ProductResponseDTO getProductById(Long id) {
         Product product = productRepository
                 .findById(id)
@@ -156,7 +156,7 @@ public class ProductServiceImplementation implements ProductService {
     @Override
     @Cacheable(
             cacheNames = "paginatedProducts",
-            key = "'page=' + #page + ':size=' + ':sort=' + #sortBy + ':direction=' + #direction"
+            key = "'page=' + #page + ':size=' + #size + ':sort=' + #sortBy + ':direction=' + #direction"
     )
     public Page<ProductResponseDTO> getAllProducts(
         int page,
