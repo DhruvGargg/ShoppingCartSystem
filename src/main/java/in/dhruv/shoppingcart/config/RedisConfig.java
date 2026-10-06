@@ -24,11 +24,8 @@ public class RedisConfig {
                 .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues()
                 .serializeValuesWith(
-                        RedisSerializationContext
-                                .SerializationPair
-                                .fromSerializer(
-                                        serializer
-                                )
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(serializer)
                 );
     }
 }

@@ -66,10 +66,10 @@ public class ProductServiceImplementation implements ProductService {
     }
 
     @Override
-//    @Cacheable(
-//            cacheNames = "productById",
-//            key = "#id"
-//    )
+    @Cacheable(
+            cacheNames = "productById",
+            key = "#id"
+    )
     public ProductResponseDTO getProductById(Long id) {
         Product product = productRepository
                 .findById(id)
