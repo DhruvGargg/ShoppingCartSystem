@@ -8,7 +8,6 @@ import in.dhruv.shoppingcart.exception.ResourceNotFoundException;
 import in.dhruv.shoppingcart.mapper.ProductMapper;
 import in.dhruv.shoppingcart.repository.CategoryRepository;
 import in.dhruv.shoppingcart.repository.ProductRepository;
-import in.dhruv.shoppingcart.service.CategoryService;
 import in.dhruv.shoppingcart.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
