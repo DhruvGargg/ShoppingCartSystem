@@ -5,6 +5,7 @@
     import in.dhruv.shoppingcart.enums.OrderStatus;
     import in.dhruv.shoppingcart.event.OrderCreatedApplicationEvent;
     import in.dhruv.shoppingcart.event.OrderCreatedEvent;
+    import in.dhruv.shoppingcart.event.OrderItemEvent;
     import in.dhruv.shoppingcart.exception.BadRequestException;
     import in.dhruv.shoppingcart.exception.ResourceNotFoundException;
     import in.dhruv.shoppingcart.mapper.OrderMapper;
@@ -18,6 +19,7 @@
 
     import java.math.BigDecimal;
     import java.time.LocalDateTime;
+    import java.util.ArrayList;
     import java.util.List;
 
     @Service
@@ -129,6 +131,7 @@
             order.setUpdatedAt(LocalDateTime.now());
 
             BigDecimal totalAmount = BigDecimal.ZERO;
+            List<OrderItemEvent> eventItems = new ArrayList<>();
             for(CartItem cartItem : cart.getCartItems()) {
                 Product product = cartItem.getProduct();
                 OrderItem orderItem = new OrderItem();
@@ -140,6 +143,12 @@
                 BigDecimal subtotal = product.getPrice()
                         .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
                 totalAmount = totalAmount.add(subtotal);
+                eventItems.add(
+                        new OrderItemEvent(
+                                product.getId(),
+                                cartItem.getQuantity()
+                        )
+                );
             }
             order.setTotalAmount(totalAmount);
             Order savedOrder = orderRepository.save(order);
@@ -152,7 +161,8 @@
                                             savedOrder.getId(),
                                             userId,
                                             savedOrder.getTotalAmount(),
-                                            savedOrder.getCreatedAt()
+                                            savedOrder.getCreatedAt(),
+                                            eventItems
                                     )
                             )
                     );
